@@ -1,15 +1,15 @@
+import os
+import re
+import shlex
+import subprocess
+from tempfile import NamedTemporaryFile
 from typing import Optional
 
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, File, UploadFile
 
 app = FastAPI()
 
-
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: Optional[bool] = None
+rverdict = re.compile(r'/tmp/[^:]+:\s([^\n]+)')
 
 
 @app.get("/")
@@ -17,12 +17,21 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+@app.post("/scan/")
+def scan_file(file: UploadFile = File(...)):
+    tmpfile = NamedTemporaryFile(delete=False)
+    tmpfile.write(file.file.read())
+    tmpfile.close()
 
+    ret = subprocess.run(shlex.split(f"/usr/bin/clamdscan {tmpfile.name}"), encoding="utf8", universal_newlines=True,
+                         capture_output=True)
 
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    return {"item_name": item.name, "item_id": item}
+    os.remove(tmpfile.name)
 
+    verdict = rverdict.search(ret.stdout)
+    if not verdict:
+        verdict = "error: unable to locate verdict in scan output"
+    else:
+        verdict = verdict.group(1)
+
+    return {file.filename: verdict}

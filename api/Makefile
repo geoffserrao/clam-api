@@ -4,8 +4,8 @@ else
 	include .make.env.dev
 endif
 
-IMAGE_NAME ?= clam-api
-CONTAINER_NAME ?= clam-api
+IMAGE_NAME ?= api
+CONTAINER_NAME ?= api
 CONTAINER_INSTANCE ?= default
 
 .PHONY: build build-force push shell run start stop rm release
@@ -40,9 +40,6 @@ clean:
 default: build
 
 check-env:
-ifndef NS
-	$(error NS is undefined - specify with -e NS or inside .make_env)
-endif
 ifndef VERSION
 	$(error VERSION is undefined - specify with -e VERSION or inside .make_env)
 endif

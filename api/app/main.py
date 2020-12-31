@@ -1,9 +1,9 @@
+__version__ = "1.0"
+
 import os
 import re
-import shlex
 import subprocess
 from tempfile import NamedTemporaryFile
-from typing import Optional
 
 from fastapi import FastAPI, File, UploadFile
 
@@ -14,7 +14,7 @@ rverdict = re.compile(r'/tmp/[^:]+:\s([^\n]+)')
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return f"clam-api v{__version__}"
 
 
 @app.post("/scan/")
@@ -23,8 +23,8 @@ def scan_file(file: UploadFile = File(...)):
     tmpfile.write(file.file.read())
     tmpfile.close()
 
-    ret = subprocess.run(shlex.split(f"/usr/bin/clamdscan {tmpfile.name}"), encoding="utf8", universal_newlines=True,
-                         capture_output=True)
+    ret = subprocess.run(["/usr/bin/clamdscan", tmpfile.name],
+                         encoding="utf8", universal_newlines=True, capture_output=True)
 
     os.remove(tmpfile.name)
 

@@ -18,5 +18,7 @@ COPY ./requirements.txt /
 RUN pip install -r /requirements.txt
 COPY app/ /app
 WORKDIR /app
+RUN pip install --no-deps /app/
+RUN pip freeze
 
-ENTRYPOINT ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0"]
+ENTRYPOINT ["uvicorn", "clamapi:app", "--reload", "--host", "0.0.0.0"]

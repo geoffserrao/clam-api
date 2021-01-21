@@ -4,7 +4,7 @@ import re
 import subprocess
 from tempfile import NamedTemporaryFile
 
-from clam_api import app
+from clamapi import app, __version__
 from fastapi import File, UploadFile
 
 rverdict = re.compile(r'/tmp/[^:]+:\s([^\n]+)')
@@ -12,7 +12,7 @@ rverdict = re.compile(r'/tmp/[^:]+:\s([^\n]+)')
 
 @app.get("/")
 def read_root():
-    return {"clam-api": f"{__version__}"}
+    return {"clamapi": f"{__version__}"}
 
 
 @app.post("/scan/")

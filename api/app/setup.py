@@ -1,9 +1,9 @@
 from setuptools import setup
 
 setup(
-    name='clam-api',
+    name='clamapi',
     version='1.0',
-    packages=[''],
+    packages=['clamapi'],
     url='https://github.com/geoffserrao/clam-api',
     license='MIT',
     author='gserrao',

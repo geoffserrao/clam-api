@@ -1,20 +1,18 @@
-__version__ = "1.0"
 
 import os
 import re
 import subprocess
 from tempfile import NamedTemporaryFile
 
-from fastapi import FastAPI, File, UploadFile
-
-app = FastAPI()
+from clam_api import app
+from fastapi import File, UploadFile
 
 rverdict = re.compile(r'/tmp/[^:]+:\s([^\n]+)')
 
 
 @app.get("/")
 def read_root():
-    return f"clam-api v{__version__}"
+    return {"clam-api": f"{__version__}"}
 
 
 @app.post("/scan/")
